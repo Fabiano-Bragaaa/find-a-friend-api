@@ -14,10 +14,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ONG
+  VISITOR
+}
+
 model User {
-  id    String @id @default(uuid())
-  name  String
-  email String @unique
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  cep       String
+  address   String
+  phone     String
+  role      Role     @default(VISITOR)
+  createdAt DateTime @default(now())
+  pets      Pets[]
 
   @@map("users")
+}
+
+enum Age {
+  FILHOTE
+  ADULTO
+  IDOSO
+}
+
+enum Size {
+  PEQUENINO
+  PEQUENO
+  MEDIO
+  GRANDE
+}
+
+enum EnergyLevel {
+  BAIXA
+  MEDIA
+  ALTA
+}
+
+enum IndependenceLevel {
+  BAIXO
+  MEDIO
+  ALTO
+}
+
+enum Environment {
+  AMBIENTE_FECHADO
+  AMBIENTE_AMPLO
+}
+
+model Pets {
+  id                String            @id @default(uuid())
+  name              String
+  about             String
+  age               Age
+  size              Size
+  energyLevel       EnergyLevel
+  independenceLevel IndependenceLevel
+  environment       Environment
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
 }
