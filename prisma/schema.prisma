@@ -15,14 +15,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  cep       String
-  address   String
-  phone     String
-  createdAt DateTime @default(now())
-  pets      Pets[]
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password_hash String
+  cep           String
+  address       String
+  phone         String
+  createdAt     DateTime @default(now())
+  pets          Pets[]
 
   @@map("users")
 }
