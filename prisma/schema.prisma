@@ -14,11 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ONG
-  VISITOR
-}
-
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -26,7 +21,6 @@ model User {
   cep       String
   address   String
   phone     String
-  role      Role     @default(VISITOR)
   createdAt DateTime @default(now())
   pets      Pets[]
 
