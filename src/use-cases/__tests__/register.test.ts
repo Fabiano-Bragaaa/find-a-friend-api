@@ -1,11 +1,12 @@
-import { PrismaUsersRepository } from '@/repositories/prisma/prisma-users-repository'
 import { describe, expect, it } from 'vitest'
 import { RegisterUseCase } from '../register'
 import { compare } from 'bcryptjs'
+import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-users-repository'
+import { UserAlreadyExists } from '../errors/user-already-exists-error'
 
 describe('Register Use Case', () => {
   it('should has user password upon register', async () => {
-    const prismaUsersRepository = new PrismaUsersRepository()
+    const prismaUsersRepository = new InMemoryUserRepository()
     const registerUseCase = new RegisterUseCase(prismaUsersRepository)
 
     const { user } = await registerUseCase.execute({
@@ -23,5 +24,48 @@ describe('Register Use Case', () => {
     )
 
     expect(isPasswordCorrectlyHashed).toBe(true)
+  })
+
+  it('should not be able to register with the same email twice', async () => {
+    const prismaUsersRepository = new InMemoryUserRepository()
+    const registerUseCase = new RegisterUseCase(prismaUsersRepository)
+
+    const email = 'johndoe@gmail.com'
+
+    await registerUseCase.execute({
+      address: 'Rua das Flores, 123 - São Paulo, SP',
+      cep: '01311000',
+      email,
+      name: 'João da Silva',
+      password: '123456',
+      phone: '11987654321',
+    })
+
+    expect(() =>
+      registerUseCase.execute({
+        address: 'Rua das Flores, 123 - São Paulo, SP',
+        cep: '01311000',
+        email,
+        name: 'João da Silva',
+        password: '123456',
+        phone: '11987654321',
+      }),
+    ).rejects.toBeInstanceOf(UserAlreadyExists)
+  })
+
+  it('should be able to register', async () => {
+    const prismaUsersRepository = new InMemoryUserRepository()
+    const registerUseCase = new RegisterUseCase(prismaUsersRepository)
+
+    const { user } = await registerUseCase.execute({
+      address: 'Rua das Flores, 123 - São Paulo, SP',
+      cep: '01311000',
+      email: 'johndoe@gmail.com',
+      name: 'João da Silva',
+      password: '123456',
+      phone: '11987654321',
+    })
+
+    expect(user.id).toEqual(expect.any(String))
   })
 })
