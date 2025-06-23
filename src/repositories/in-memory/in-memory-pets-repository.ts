@@ -6,9 +6,9 @@ export class InMemoryPetsRepository implements PetsRepository {
   public items: Pets[] = []
 
   async create(data: Prisma.PetsUncheckedCreateInput) {
-    const petImages = Array.isArray(data.petImages)
-      ? data.petImages
-      : (data.petImages?.set ?? [])
+    const pet_images = Array.isArray(data.pet_images)
+      ? data.pet_images
+      : (data.pet_images?.set ?? [])
 
     const requirements = Array.isArray(data.requirements)
       ? data.requirements
@@ -18,12 +18,12 @@ export class InMemoryPetsRepository implements PetsRepository {
       id: data.id ?? randomUUID(),
       about: data.about,
       age: data.age,
-      energyLevel: data.energyLevel,
+      energy_level: data.energy_level,
       environment: data.environment,
-      independenceLevel: data.independenceLevel,
+      independence_level: data.independence_level,
       name: data.name,
       owner_id: data.owner_id,
-      petImages,
+      pet_images,
       requirements,
       size: data.size,
     }

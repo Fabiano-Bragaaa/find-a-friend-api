@@ -28,47 +28,17 @@ model User {
   @@map("users")
 }
 
-enum Age {
-  FILHOTE
-  ADULTO
-  IDOSO
-}
-
-enum Size {
-  PEQUENINO
-  PEQUENO
-  MEDIO
-  GRANDE
-}
-
-enum EnergyLevel {
-  BAIXA
-  MEDIA
-  ALTA
-}
-
-enum IndependenceLevel {
-  BAIXO
-  MEDIO
-  ALTO
-}
-
-enum Environment {
-  AMBIENTE_FECHADO
-  AMBIENTE_AMPLO
-}
-
 model Pets {
-  id                String            @id @default(uuid())
-  name              String
-  about             String
-  requirements      String[]
-  petImages         String[]
-  age               Age
-  size              Size
-  energyLevel       EnergyLevel
-  independenceLevel IndependenceLevel
-  environment       Environment
+  id                 String   @id @default(uuid())
+  name               String
+  age                String
+  size               String
+  energy_level       String
+  independence_level String
+  environment        String
+  about              String
+  pet_images         String[]
+  requirements       String[]
 
   owner_id String
   owner    User   @relation(fields: [owner_id], references: [id])
