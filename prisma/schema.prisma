@@ -63,6 +63,7 @@ model Pets {
   name              String
   about             String
   requirements      String[]
+  petImages         String[]
   age               Age
   size              Size
   energyLevel       EnergyLevel
