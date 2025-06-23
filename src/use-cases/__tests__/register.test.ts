@@ -1,15 +1,20 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { RegisterUseCase } from '../register'
 import { compare } from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { UserAlreadyExists } from '../errors/user-already-exists-error'
 
-describe('Register Use Case', () => {
-  it('should has user password upon register', async () => {
-    const prismaUsersRepository = new InMemoryUserRepository()
-    const registerUseCase = new RegisterUseCase(prismaUsersRepository)
+let userRepository: InMemoryUserRepository
+let sut: RegisterUseCase
 
-    const { user } = await registerUseCase.execute({
+describe('Register Use Case', () => {
+  beforeEach(() => {
+    userRepository = new InMemoryUserRepository()
+    sut = new RegisterUseCase(userRepository)
+  })
+
+  it('should has user password upon register', async () => {
+    const { user } = await sut.execute({
       address: 'Rua das Flores, 123 - São Paulo, SP',
       cep: '01311000',
       email: 'usuari0o@example.com',
@@ -27,12 +32,9 @@ describe('Register Use Case', () => {
   })
 
   it('should not be able to register with the same email twice', async () => {
-    const prismaUsersRepository = new InMemoryUserRepository()
-    const registerUseCase = new RegisterUseCase(prismaUsersRepository)
-
     const email = 'johndoe@gmail.com'
 
-    await registerUseCase.execute({
+    await sut.execute({
       address: 'Rua das Flores, 123 - São Paulo, SP',
       cep: '01311000',
       email,
@@ -42,7 +44,7 @@ describe('Register Use Case', () => {
     })
 
     expect(() =>
-      registerUseCase.execute({
+      sut.execute({
         address: 'Rua das Flores, 123 - São Paulo, SP',
         cep: '01311000',
         email,
@@ -54,10 +56,7 @@ describe('Register Use Case', () => {
   })
 
   it('should be able to register', async () => {
-    const prismaUsersRepository = new InMemoryUserRepository()
-    const registerUseCase = new RegisterUseCase(prismaUsersRepository)
-
-    const { user } = await registerUseCase.execute({
+    const { user } = await sut.execute({
       address: 'Rua das Flores, 123 - São Paulo, SP',
       cep: '01311000',
       email: 'johndoe@gmail.com',
