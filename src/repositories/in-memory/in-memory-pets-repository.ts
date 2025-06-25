@@ -1,11 +1,41 @@
 import { Pets, Prisma } from 'generated/prisma'
 import { PetsRepository } from '../pets-repository'
 import { randomUUID } from 'crypto'
+import { InMemoryUserRepository } from './in-memory-users-repository'
+
+type PetWithOwner = Pets & { owner: { city: string } }
 
 export class InMemoryPetsRepository implements PetsRepository {
-  public items: Pets[] = []
+  public items: PetWithOwner[] = []
+
+  constructor(private userRepository: InMemoryUserRepository) {}
+
+  async findByCity(city: string) {
+    const lowerCaseCity = city.toLowerCase().trim()
+    const pets = this.items.filter((item) =>
+      item.owner.city.toLocaleLowerCase().includes(lowerCaseCity),
+    )
+
+    return pets
+  }
+
+  async findById(id: string) {
+    const pet = this.items.find((item) => item.id === id)
+
+    if (!pet) {
+      return null
+    }
+
+    return pet
+  }
 
   async create(data: Prisma.PetsUncheckedCreateInput) {
+    const owner = await this.userRepository.findById(data.owner_id)
+
+    if (!owner) {
+      throw new Error('Owner not found')
+    }
+
     const pet_images = Array.isArray(data.pet_images)
       ? data.pet_images
       : (data.pet_images?.set ?? [])
@@ -14,7 +44,7 @@ export class InMemoryPetsRepository implements PetsRepository {
       ? data.requirements
       : (data.requirements?.set ?? [])
 
-    const pets: Pets = {
+    const pets: PetWithOwner = {
       id: data.id ?? randomUUID(),
       about: data.about,
       age: data.age,
@@ -26,6 +56,9 @@ export class InMemoryPetsRepository implements PetsRepository {
       pet_images,
       requirements,
       size: data.size,
+      owner: {
+        city: owner.city,
+      },
     }
 
     this.items.push(pets)

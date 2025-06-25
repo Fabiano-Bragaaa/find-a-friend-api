@@ -18,6 +18,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
             message: 'CEP inválido. Use 8 dígitos numéricos.',
           }),
         address: z.string(),
+        city: z.string(),
         phone: z
           .string()
           .transform((value) => value.replace(/\D/g, ''))
@@ -30,9 +31,8 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
         path: ['confirm_password'],
       })
 
-    const { name, email, address, phone, cep, password } = registerBody.parse(
-      request.body,
-    )
+    const { name, email, address, phone, cep, city, password } =
+      registerBody.parse(request.body)
 
     const { registerUseCase } = MakeRegisterUseCase()
 
@@ -43,6 +43,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
       address,
       cep,
       phone,
+      city,
     })
 
     return reply.status(201).send()

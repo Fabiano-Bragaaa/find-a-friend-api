@@ -1,21 +1,21 @@
 import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { CreatePetUseCase } from '../create-pet'
+import { GetPetByIdUseCase } from '../get-pet-by-id'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { hash } from 'bcryptjs'
 
 let petRepository: InMemoryPetsRepository
 let userRepository: InMemoryUserRepository
-let sut: CreatePetUseCase
+let sut: GetPetByIdUseCase
 
-describe('Create Pet Use Case', () => {
+describe('Get pet by id Use Case', () => {
   beforeEach(() => {
     userRepository = new InMemoryUserRepository()
     petRepository = new InMemoryPetsRepository(userRepository)
-    sut = new CreatePetUseCase(petRepository)
+    sut = new GetPetByIdUseCase(petRepository)
   })
 
-  it('should be able to create a pet', async () => {
+  it('should be able to get pet by id', async () => {
     const user = await userRepository.create({
       address: 'Rua das Flores, 123 - São Paulo, SP',
       cep: '01311000',
@@ -26,7 +26,7 @@ describe('Create Pet Use Case', () => {
       city: 'São Paulo',
     })
 
-    const { pet } = await sut.execute({
+    const pets = await petRepository.create({
       about: 'Um cachorro brincalhão e carinhoso, adora atenção e passeios.',
       age: '2',
       energy_level: 'Alta',
@@ -43,6 +43,10 @@ describe('Create Pet Use Case', () => {
         'Requer acompanhamento veterinário regular',
       ],
       size: 'Médio',
+    })
+
+    const { pet } = await sut.execute({
+      petId: pets.id,
     })
 
     expect(pet.id).toEqual(expect.any(String))
