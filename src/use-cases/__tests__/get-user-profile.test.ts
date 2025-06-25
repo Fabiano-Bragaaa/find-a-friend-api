@@ -21,6 +21,7 @@ describe('Get user profile Use Case', () => {
       password_hash: await hash('123456', 6),
       phone: '(11) 98765-4321',
       createdAt: new Date(),
+      city: 'São Paulo',
     })
 
     const { user } = await sut.execute({

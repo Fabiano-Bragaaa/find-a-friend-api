@@ -9,6 +9,7 @@ interface RegisterUseCaseTypes {
   cep: string
   address: string
   phone: string
+  city: string
 }
 
 export class RegisterUseCase {
@@ -21,6 +22,7 @@ export class RegisterUseCase {
     name,
     password,
     phone,
+    city,
   }: RegisterUseCaseTypes) {
     const userWithSameEmail = await this.userRepository.findByEmail(email)
 
@@ -37,6 +39,7 @@ export class RegisterUseCase {
       email,
       password_hash,
       phone,
+      city,
     })
 
     return { user }
