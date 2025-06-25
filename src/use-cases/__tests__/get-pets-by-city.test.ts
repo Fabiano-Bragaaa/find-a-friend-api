@@ -1,21 +1,20 @@
-import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { GetPetByIdUseCase } from '../get-pet-by-id'
+import { GetPetsByCityUseCase } from '../get-pets-by-city'
+import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { hash } from 'bcryptjs'
 
 let petRepository: InMemoryPetsRepository
 let userRepository: InMemoryUserRepository
-let sut: GetPetByIdUseCase
-
-describe('Get pet by id Use Case', () => {
+let sut: GetPetsByCityUseCase
+describe('Get pets by city Use Case', () => {
   beforeEach(() => {
     userRepository = new InMemoryUserRepository()
     petRepository = new InMemoryPetsRepository(userRepository)
-    sut = new GetPetByIdUseCase(petRepository)
+    sut = new GetPetsByCityUseCase(petRepository)
   })
 
-  it('should be able to get pet by id', async () => {
+  it('should be able to get pets with city', async () => {
     const user = await userRepository.create({
       address: 'Rua das Flores, 123 - São Paulo, SP',
       cep: '01311000',
@@ -26,7 +25,7 @@ describe('Get pet by id Use Case', () => {
       city: 'São Paulo',
     })
 
-    const pets = await petRepository.create({
+    await petRepository.create({
       about: 'Um cachorro brincalhão e carinhoso, adora atenção e passeios.',
       age: '2',
       energy_level: 'Alta',
@@ -45,10 +44,30 @@ describe('Get pet by id Use Case', () => {
       size: 'Médio',
     })
 
-    const { pet } = await sut.execute({
-      petId: pets.id,
+    await petRepository.create({
+      about: 'Um cachorro brincalhão.',
+      age: '2',
+      energy_level: 'Alta',
+      environment: 'Espaço grande com área externa',
+      independence_level: 'Média',
+      name: 'Thomas',
+      owner_id: user.id,
+      pet_images: [
+        'https://example.com/images/thor1.jpg',
+        'https://example.com/images/thor2.jpg',
+      ],
+      requirements: [
+        'Precisa de passeios diários',
+        'Requer acompanhamento veterinário regular',
+      ],
+      size: 'Médio',
     })
 
-    expect(pet.id).toEqual(expect.any(String))
+    const { pets } = await sut.execute({ city: 'são' })
+
+    expect(pets).toEqual([
+      expect.objectContaining({ name: 'Thor' }),
+      expect.objectContaining({ name: 'Thomas' }),
+    ])
   })
 })
