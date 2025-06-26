@@ -10,30 +10,41 @@ export class InMemoryPetsRepository implements PetsRepository {
 
   constructor(private userRepository: InMemoryUserRepository) {}
   async findByCharacteristics(params: FindByCharacteristicsParams) {
-    const { city, age, energy_level, independence_level, size } = params
+    const {
+      city,
+      age,
+      energy_level,
+      independence_level,
+      size,
+      page = 1,
+    } = params
 
     const lowerCaseCity = city.trim().toLowerCase()
 
-    const pets = this.items.filter((item) => {
-      const matchesCity = item.owner.city.toLowerCase().includes(lowerCaseCity)
+    const pets = this.items
+      .filter((item) => {
+        const matchesCity = item.owner.city
+          .toLowerCase()
+          .includes(lowerCaseCity)
 
-      const matchesAge = age ? item.age === age : true
-      const matchesEnergy = energy_level
-        ? item.energy_level === energy_level
-        : true
-      const matchesIndependence = independence_level
-        ? item.independence_level === independence_level
-        : true
-      const matchesSize = size ? item.size === size : true
+        const matchesAge = age ? item.age === age : true
+        const matchesEnergy = energy_level
+          ? item.energy_level === energy_level
+          : true
+        const matchesIndependence = independence_level
+          ? item.independence_level === independence_level
+          : true
+        const matchesSize = size ? item.size === size : true
 
-      return (
-        matchesCity &&
-        matchesAge &&
-        matchesEnergy &&
-        matchesIndependence &&
-        matchesSize
-      )
-    })
+        return (
+          matchesCity &&
+          matchesAge &&
+          matchesEnergy &&
+          matchesIndependence &&
+          matchesSize
+        )
+      })
+      .slice((page - 1) * 20, page * 20)
 
     return pets
   }

@@ -76,4 +76,5 @@ describe('Get pets by city Use Case', () => {
       NoPetsFoundError,
     )
   })
+  it('should be able to get pets with pagination', async () => {})
 })

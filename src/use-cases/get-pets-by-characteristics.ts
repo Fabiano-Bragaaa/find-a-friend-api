@@ -8,6 +8,7 @@ interface GetPetsByCharacteristicsUseCaseRequest {
   energy_level?: string
   independence_level?: string
   size?: string
+  page?: number
 }
 interface GetPetsByCharacteristicsUseCaseResponse {
   pets: Pets[]
@@ -22,6 +23,7 @@ export class GetPetsByCharacteristicsUseCase {
     energy_level,
     independence_level,
     size,
+    page,
   }: GetPetsByCharacteristicsUseCaseRequest): Promise<GetPetsByCharacteristicsUseCaseResponse> {
     const pets = await this.petRepository.findByCharacteristics({
       city,
@@ -29,6 +31,7 @@ export class GetPetsByCharacteristicsUseCase {
       energy_level,
       independence_level,
       size,
+      page,
     })
 
     if (pets.length === 0) {
