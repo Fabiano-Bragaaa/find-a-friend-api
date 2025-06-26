@@ -1,9 +1,10 @@
 import { PetsRepository } from '@/repositories/pets-repository'
 import { Pets } from 'generated/prisma'
-import { NoPetsFoundInCityError } from './errors/no-pets-found-in-city-error'
+import { NoPetsFoundError } from './errors/no-pets-found-error'
 
 interface GetPetsByCityUseCaseRequest {
   city: string
+  page?: number
 }
 interface GetPetsByCityUseCaseResponse {
   pets: Pets[]
@@ -14,11 +15,12 @@ export class GetPetsByCityUseCase {
 
   async execute({
     city,
+    page,
   }: GetPetsByCityUseCaseRequest): Promise<GetPetsByCityUseCaseResponse> {
-    const pets = await this.petRepository.findByCity(city)
+    const pets = await this.petRepository.findByCity(city, page)
 
     if (pets.length === 0) {
-      throw new NoPetsFoundInCityError()
+      throw new NoPetsFoundError()
     }
 
     return { pets }

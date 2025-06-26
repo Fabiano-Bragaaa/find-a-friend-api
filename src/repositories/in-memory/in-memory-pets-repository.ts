@@ -1,5 +1,5 @@
 import { Pets, Prisma } from 'generated/prisma'
-import { PetsRepository } from '../pets-repository'
+import { FindByCharacteristicsParams, PetsRepository } from '../pets-repository'
 import { randomUUID } from 'crypto'
 import { InMemoryUserRepository } from './in-memory-users-repository'
 
@@ -9,12 +9,53 @@ export class InMemoryPetsRepository implements PetsRepository {
   public items: PetWithOwner[] = []
 
   constructor(private userRepository: InMemoryUserRepository) {}
+  async findByCharacteristics(params: FindByCharacteristicsParams) {
+    const {
+      city,
+      age,
+      energy_level,
+      independence_level,
+      size,
+      page = 1,
+    } = params
 
-  async findByCity(city: string) {
+    const lowerCaseCity = city.trim().toLowerCase()
+
+    const pets = this.items
+      .filter((item) => {
+        const matchesCity = item.owner.city
+          .toLowerCase()
+          .includes(lowerCaseCity)
+
+        const matchesAge = age ? item.age === age : true
+        const matchesEnergy = energy_level
+          ? item.energy_level === energy_level
+          : true
+        const matchesIndependence = independence_level
+          ? item.independence_level === independence_level
+          : true
+        const matchesSize = size ? item.size === size : true
+
+        return (
+          matchesCity &&
+          matchesAge &&
+          matchesEnergy &&
+          matchesIndependence &&
+          matchesSize
+        )
+      })
+      .slice((page - 1) * 20, page * 20)
+
+    return pets
+  }
+
+  async findByCity(city: string, page = 1) {
     const lowerCaseCity = city.toLowerCase().trim()
-    const pets = this.items.filter((item) =>
-      item.owner.city.toLocaleLowerCase().includes(lowerCaseCity),
-    )
+    const pets = this.items
+      .filter((item) =>
+        item.owner.city.toLocaleLowerCase().includes(lowerCaseCity),
+      )
+      .slice((page - 1) * 20, page * 20)
 
     return pets
   }
