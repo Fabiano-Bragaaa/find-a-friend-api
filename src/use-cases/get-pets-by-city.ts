@@ -1,6 +1,6 @@
 import { PetsRepository } from '@/repositories/pets-repository'
 import { Pets } from 'generated/prisma'
-import { NoPetsFoundInCityError } from './errors/no-pets-found-error'
+import { NoPetsFoundError } from './errors/no-pets-found-error'
 
 interface GetPetsByCityUseCaseRequest {
   city: string
@@ -18,7 +18,7 @@ export class GetPetsByCityUseCase {
     const pets = await this.petRepository.findByCity(city)
 
     if (pets.length === 0) {
-      throw new NoPetsFoundInCityError()
+      throw new NoPetsFoundError()
     }
 
     return { pets }
