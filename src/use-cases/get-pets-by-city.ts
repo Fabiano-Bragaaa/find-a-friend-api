@@ -1,6 +1,6 @@
 import { PetsRepository } from '@/repositories/pets-repository'
 import { Pets } from 'generated/prisma'
-import { NoPetsFoundInCityError } from './errors/no-pets-found-in-city-error'
+import { NoPetsFoundInCityError } from './errors/no-pets-found-error'
 
 interface GetPetsByCityUseCaseRequest {
   city: string
