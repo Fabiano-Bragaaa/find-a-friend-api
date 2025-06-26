@@ -3,6 +3,7 @@ import { GetPetsByCityUseCase } from '../get-pets-by-city'
 import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { hash } from 'bcryptjs'
+import { NoPetsFoundError } from '../errors/no-pets-found-error'
 
 let petRepository: InMemoryPetsRepository
 let userRepository: InMemoryUserRepository
@@ -69,5 +70,10 @@ describe('Get pets by city Use Case', () => {
       expect.objectContaining({ name: 'Thor' }),
       expect.objectContaining({ name: 'Thomas' }),
     ])
+  })
+  it('should not be able to get pets with city', async () => {
+    await expect(sut.execute({ city: 'são' })).rejects.toBeInstanceOf(
+      NoPetsFoundError,
+    )
   })
 })
