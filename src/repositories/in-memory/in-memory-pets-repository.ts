@@ -49,11 +49,13 @@ export class InMemoryPetsRepository implements PetsRepository {
     return pets
   }
 
-  async findByCity(city: string) {
+  async findByCity(city: string, page = 1) {
     const lowerCaseCity = city.toLowerCase().trim()
-    const pets = this.items.filter((item) =>
-      item.owner.city.toLocaleLowerCase().includes(lowerCaseCity),
-    )
+    const pets = this.items
+      .filter((item) =>
+        item.owner.city.toLocaleLowerCase().includes(lowerCaseCity),
+      )
+      .slice((page - 1) * 20, page * 20)
 
     return pets
   }
