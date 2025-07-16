@@ -10,6 +10,7 @@ interface GetPetsByCharacteristicsUseCaseRequest {
   size?: string
   page?: number
 }
+
 interface GetPetsByCharacteristicsUseCaseResponse {
   pets: Pets[]
 }
