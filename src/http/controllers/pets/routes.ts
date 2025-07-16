@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify'
 import { create } from './create'
 import { VerifyJwt } from '@/http/middlewares/verify-jwt'
-import { findById } from './findById'
-import { findByCharacteristics } from './findByCharacteristics'
-import { findByCity } from './findByCity'
+import { findById } from './find-by-id'
+import { findByCharacteristics } from './find-by-characteristics'
+import { findByCity } from './find-by-city'
 
 export async function petsRoutes(app: FastifyInstance) {
   app.addHook('onRequest', VerifyJwt)
